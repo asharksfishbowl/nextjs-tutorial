@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 // Custom Components
 import Copyright from '../components/Copyright';
 
-const theme = createTheme();
+import theme from '../styles/theme';
 
 export default function SignInSide() {
     const handleSubmit = (event) => {
@@ -39,7 +39,7 @@ export default function SignInSide() {
                     sm={4}
                     md={7}
                     sx={{
-                        backgroundImage: 'url(https://source.unsplash.com/random)',
+                        backgroundImage: 'url(https://source.unsplash.com/random?panda)',
                         backgroundRepeat: 'no-repeat',
                         backgroundColor: (t) =>
                             t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],

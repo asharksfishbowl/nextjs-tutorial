@@ -16,7 +16,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 // Custom Components
 import Copyright from '../components/Copyright';
 
-const theme = createTheme();
+import theme from '../styles/theme';
 
 export default function SignIn() {
     const handleSubmit = (event) => {
