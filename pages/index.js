@@ -22,16 +22,27 @@ export default function Home({ isConnected }) {
                     Next.js example
                 </Typography>
                 {isConnected ? (
-                    <h2 className="subtitle">You are connected to MongoDB</h2>
+                    <div>
+                        <h2 className="subtitle">You are connected to MongoDB</h2>
+                        <Link href="/about" color="secondary">
+                            Go to the about page
+                        </Link>
+                        <br/>
+                        <Link href="/sign-in-side" color="secondary">
+                            Go to sign in
+                        </Link>
+                        <br/>
+                        <Link href="/sign-up" color="secondary">
+                            Go to sign up
+                        </Link>
+                    </div>
+
                 ) : (
                     <h2 className="subtitle">
                         You are NOT connected to MongoDB. Check the <code>README.md</code>{' '}
                         for instructions.
                     </h2>
                 )}
-                <Link href="/about" color="secondary">
-                    Go to the about page
-                </Link>
                 <ProTip />
                 <Copyright />
             </Box>
