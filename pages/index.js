@@ -5,10 +5,12 @@ import * as React from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
+import SignInSide from "./sign-in-side";
+
+// Custom Components
 import ProTip from '../components/ProTip';
 import Link from '../components/Link';
 import Copyright from '../components/Copyright';
-
 
 // Mongo connection
 import clientPromise from '../lib/mongodb'
@@ -16,26 +18,21 @@ import clientPromise from '../lib/mongodb'
 export default function Home({ isConnected }) {
 
     return (
-        <Container maxWidth="sm">
-            <Box sx={{ my: 4 }}>
-                <Typography variant="h4" component="h1" gutterBottom>
-                    Next.js example
-                </Typography>
-                {isConnected ? (
-                    <h2 className="subtitle">You are connected to MongoDB</h2>
-                ) : (
-                    <h2 className="subtitle">
+        <div>
+            {isConnected ? (
+                <SignInSide />
+
+            ) : (
+                <div>
+                    <h2 className="error">
                         You are NOT connected to MongoDB. Check the <code>README.md</code>{' '}
                         for instructions.
                     </h2>
-                )}
-                <Link href="/about" color="secondary">
-                    Go to the about page
-                </Link>
-                <ProTip />
-                <Copyright />
-            </Box>
-        </Container>
+                    <ProTip />
+                    <Copyright />
+                </div>
+            )}
+        </div>
     );
 }
 
