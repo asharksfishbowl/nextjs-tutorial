@@ -66,7 +66,7 @@ export default function ForgotPassword() {
                         </Button>
                         <Grid container justifyContent="center">
                             <Grid item>
-                                <Link href="/sign-in-side" variant="body2">
+                                <Link href="./sign-in-side" variant="body2">
                                     Take me back to Sign in
                                 </Link>
                             </Grid>

@@ -18,7 +18,10 @@ import Copyright from '../components/Copyright';
 
 import theme from '../styles/theme';
 
-export default function SignInSide() {
+// Auth
+import { getCsrfToken } from "next-auth/react"
+
+export default function SignInSide({ csrfToken }) {
     const handleSubmit = (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
@@ -98,12 +101,12 @@ export default function SignInSide() {
                             </Button>
                             <Grid container>
                                 <Grid item xs>
-                                    <Link href="/forgot-password" variant="body2">
+                                    <Link href="./forgot-password" variant="body2">
                                         Forgot password?
                                     </Link>
                                 </Grid>
                                 <Grid item>
-                                    <Link href="/sign-up" variant="body2">
+                                    <Link href="./sign-up" variant="body2">
                                         {"Don't have an account? Sign Up"}
                                     </Link>
                                 </Grid>
