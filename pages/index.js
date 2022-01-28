@@ -5,7 +5,7 @@ import * as React from 'react';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-import SignInSide from "./sign-in-side";
+import GithubSearch from "./github-search";
 
 // Custom Components
 import ProTip from '../components/ProTip';
@@ -20,7 +20,7 @@ export default function Home({ isConnected }) {
     return (
         <div>
             {isConnected ? (
-                <SignInSide />
+                <GithubSearch />
 
             ) : (
                 <div>
