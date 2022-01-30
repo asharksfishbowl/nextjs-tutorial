@@ -8,20 +8,103 @@ import TextField from "@mui/material/TextField";
 import Grid from "@mui/material/Grid";
 import InputAdornment from '@mui/material/InputAdornment';
 import SearchIcon from '@mui/icons-material/Search';
-
+import CircularProgress from '@mui/material/CircularProgress';
+import Fade from '@mui/material/Fade';
+import Typography from "@mui/material/Typography";
+// import { Octokit, App } from "octokit";
+// import { createTokenAuth } from "@octokit/auth-token"
 import theme from '../styles/theme';
+
+const { Octokit } = require("@octokit/core");
+// Create a personal access token at https://github.com/settings/tokens/new?scopes=repo
+// TODO:: make this an environment variable
+const octokit = new Octokit({ auth: `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` });
 
 // Custom Components
 import Copyright from '../components/Copyright';
+import GithubDataTable from '../components/GithubDataTable';
+
+
+const initialFormData = Object.freeze({
+    username: ""
+});
 
 export default function GithubSearch() {
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        const data = new FormData(event.currentTarget);
-        // eslint-disable-next-line no-console
-        console.log({
-            data: data
+    const [loading, setLoading] = React.useState(false);
+    const [formData, updateFormData] = React.useState(initialFormData);
+    const [rows, updateDataTable] = React.useState([]);
+    const [query, setQuery] = React.useState('idle');
+    const timerRef = React.useRef();
+
+    React.useEffect(
+        () => () => {
+            clearTimeout(timerRef.current);
+        },
+        [],
+    );
+
+    const handleChange = (event) => {
+        updateFormData({
+            ...formData,
+            // Trimming any whitespace
+            [event.target.name]: event.target.value.trim()
         });
+    };
+
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
+        if (query !== 'idle') {
+            setQuery('idle');
+        }
+        if (formData) {
+            let rows = [];
+            let username = formData.username;
+            if (username) {
+                setQuery('progress');
+                const resp = await octokit.request('GET /search/users', {
+                    q: username,
+                    per_page: 100
+                });
+                // I feel like there is a faster way of doing this, like jq filtering TODO:: Improve performance here
+                if (resp.data.items.length >= 1) {
+                    for (let i = 0; i < resp.data.items.length; i++) {
+                        const user = await octokit.request('GET /users/{username}', {
+                            username: resp.data.items[i].login
+                        });
+
+                        let stars = 0;
+                        const repos = await fetch(resp.data.items[i].repos_url);
+                        if (Array.isArray(repos)){
+                            stars = repos.reduce(function(sum, current) {
+                                return sum + current.stargazers_count;
+                            }, 0);
+                        }
+
+                        user.data.stars = stars;
+
+                        rows.push(user.data)
+                    }
+                    updateDataTable(rows);
+                    setQuery('success');
+                }
+                else {
+                    setQuery('success');
+                }
+            }
+            else {
+                // TODO:: Make this an error on the text field with red color
+                alert('Please Enter a Username to Search By')
+            }
+
+        } else {
+            console.log('No Formdata found');
+        }
+
+        // eslint-disable-next-line no-console
+
     };
 
     return (
@@ -36,12 +119,29 @@ export default function GithubSearch() {
                         alignItems: 'center',
                     }}
                 >
-                    <Box component="form" onSubmit={handleSubmit} noValidate >
-                        <Grid container spacing={1}>
+                    <Box sx={{ height: 40 }}>
+                        {query === 'success' ? (
+                            <Typography>Success!</Typography>
+                        ) : (
+                            <Fade
+                                in={query === 'progress'}
+                                style={{
+                                    transitionDelay: query === 'progress' ? '800ms' : '0ms',
+                                }}
+                                unmountOnExit
+                            >
+                                <Box sx={{ width: '100%' }}>
+                                    <CircularProgress color="secondary" />
+                                </Box>
+                            </Fade>
+                        )}
+                    </Box>
+                    <Box component="form" onSubmit={handleSubmit} noValidate sx={{width:'75%'}}>
+                        <Grid container spacing={1} padding={1}>
                             <Grid item lg>
                                 <TextField
-                                    id="search"
-                                    label="Search Github"
+                                    name="username"
+                                    label="Search Github by Username"
                                     autoFocus
                                     InputProps={{
                                         startAdornment: (
@@ -52,18 +152,16 @@ export default function GithubSearch() {
                                     }}
                                     variant="outlined"
                                     fullWidth
-                                    sx={{ mt: 2, mb: 2 }}
+                                    size="small"
+                                    onChange={handleChange}
                                 />
-                            </Grid>
-                            <Grid item>
-
                             </Grid>
                             <Grid item>
                                 <Button
                                     type="submit"
                                     fullWidth
                                     variant="contained"
-                                    sx={{ mt: 3, mb: 2 }}
+                                    size="medium"
                                 >
                                     Search
                                 </Button>
@@ -71,6 +169,7 @@ export default function GithubSearch() {
                         </Grid>
                     </Box>
                 </Box>
+                <GithubDataTable rows={rows}/>
                 <Copyright />
             </Container>
         </ThemeProvider>
