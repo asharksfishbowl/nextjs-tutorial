@@ -18,7 +18,7 @@ import theme from '../styles/theme';
 const { Octokit } = require("@octokit/core");
 // Create a personal access token at https://github.com/settings/tokens/new?scopes=repo
 // TODO:: make this an environment variable
-const octokit = new Octokit({ auth: `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` });
+const octokit = new Octokit({ auth: `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` });
 
 // Custom Components
 import Copyright from '../components/Copyright';
